@@ -54,11 +54,13 @@ If successfully executed, the outputs would be generated inside the processed fo
 ### Visualization of Processed Data
 The processed soil moisture data can be visualized using the provided Python scripts. The main script for visualization is [witsms_reader.py](witsms_reader.py), which allows you to print metadata, save metadata to a CSV file, and plot soil moisture data for specific GPIs or all GPIs.
 
+Please setup the path for the desired processed data folder inside *config.py* file before proceeding.
+
 #### Command-Line Arguments for Visualization
 
-- `--print-metadata`: Prints the metadata in CSV format to the console.
-- `--save-metadata`: Saves the metadata to a default CSV file (`metadata.csv`).
-- `--plot-gpi [GPI]`: Plots soil moisture data for the specified GPI. If no GPI is provided, it plots data for all GPIs.
+- `--print-metadata`: Prints the metadata of the processed files in CSV format.
+- `--save-metadata`: Saves the metadata of the processed files.
+- `--plot-gpi [GPI]`: Plots soil moisture data for the specified SMS ID refered as GPI.
 
 #### Example Usages
 
@@ -93,8 +95,7 @@ The processed soil moisture data can be visualized using the provided Python scr
     This command will print metadata to the console, save it to `metadata.csv`, and plot soil moisture data for the GPI `2023110`.
 
 > [!NOTE]
-> If `--plot-gpi` is provided without a specific GPI, the script will plot data for all GPIs.
-
+> If `--plot-gpi` is provided without a specific GPI, the script will plot data for all available GPIs.
 
 ## Contributing
 

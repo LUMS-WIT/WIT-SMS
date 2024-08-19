@@ -1,6 +1,12 @@
-import os, re, datetime, csv
+import os
+import re
+import datetime
+import csv
 import matplotlib.pyplot as plt
+import argparse  # New import for command-line arguments
 
+from config import SMS_PATH
+ 
 
 class SoilMoistureData:
     def __init__(self, folder_path):
@@ -16,9 +22,9 @@ class SoilMoistureData:
 
         for file in files:
             file_path = os.path.join(self.folder_path, file)
-            gpi = re.search('gpi=(\d+)', file).group(1)
-            lat = re.search('lat=([-+]?[0-9]*\.?[0-9]+)', file).group(1)
-            lon = re.search('lon=([-+]?[0-9]*\.?[0-9]+)', file).group(1)
+            gpi = re.search(r'gpi=(\d+)', file).group(1)
+            lat = re.search(r'lat=([-+]?[0-9]*\.?[0-9]+)', file).group(1)
+            lon = re.search(r'lon=([-+]?[0-9]*\.?[0-9]+)', file).group(1)
             timestamps = []
             soil_moistures = []
 
@@ -106,7 +112,8 @@ class SoilMoistureData:
                     found = True
                     break  # Stop after plotting the specified GPI
             if not found:
-                raise ValueError(f'GPI {gpi} not available in metadata')
+                gpi_ = [meta['gpi'] for meta in self.metadata]
+                raise ValueError(f'GPI {gpi} not available in metadata. The available GPI are {gpi_}')
         else:
             # If no GPI is specified, plot all data
             for (timestamps, soil_moistures), meta in zip(self.data, self.metadata):
@@ -119,15 +126,27 @@ class SoilMoistureData:
                 plt.show()
 
 
-# Example usage:
+if __name__ == "__main__":
+    # Set up argument parsing
+    parser = argparse.ArgumentParser(description='Process soil moisture data.')
+    parser.add_argument('--print-metadata', action='store_true', help='Print metadata in CSV format')
+    parser.add_argument('--save-metadata', action='store_true', help='Save metadata to a CSV file')
+    parser.add_argument('--plot-gpi', nargs='?', const=None, help='Plot data for a specific GPI')
+    
+    args = parser.parse_args()
 
-# wit_sms_path = 'D:\SEBAL\datasets\witsms\processed\SWF SMS\daily'
-# soil_moisture_data = SoilMoistureData(wit_sms_path)
-# soil_moisture_data.read_data()
-# soil_moisture_data.print_metadata()  # Print metadata in CSV format
+    # Initialize the SoilMoistureData class
+    soil_moisture_data = SoilMoistureData(SMS_PATH)
+    soil_moisture_data.read_data()
 
-# #soil_moisture_data.save_metadata_to_csv()  # Save metadata to a CSV file
+    # Handle the command-line arguments
+    if args.print_metadata:
+        soil_moisture_data.print_metadata()  # Print metadata in CSV format
 
+    if args.save_metadata:
+        soil_moisture_data.save_metadata_to_csv()  # Save metadata to a CSV file
 
-# # Plotting data for a specific GPI
-# soil_moisture_data.plot_data_gpi()
+    if args.plot_gpi is not None:
+        soil_moisture_data.plot_data_gpi(args.plot_gpi)  # Plot data for the specified GPI or all GPIs if none is specified
+    elif args.plot_gpi is None:
+        soil_moisture_data.plot_data_gpi() 
