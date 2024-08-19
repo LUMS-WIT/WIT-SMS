@@ -309,10 +309,6 @@ def has_one_row(filename):
     print(f"Error opening file {filename}: {e}")
     return False  # Assume not one row on error
 
-
-# TimeStamp Format
-# mm/dd/yyyy h:mm:ss AM/PM
-
 if __name__ == "__main__":
 
     # Define the data file paths using absolute paths
